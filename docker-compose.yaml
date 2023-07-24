@@ -1,0 +1,18 @@
+version: "3"
+services:
+  db-backup-restic:
+    image: guestros/db-backup-restic:latest
+    build: .
+    platform: linux/amd64
+    environment:
+      - GIT_REPO=git@github.com:JustinGuese/db-backups.git
+      - BACKUP_NAME=myopia-prod
+      ## one OR the other
+      # mongodb
+      # - MONGODB_URI=mongodb://
+      # postgres
+      - POSTGRES_URI=
+    volumes:
+      - ./persistent/:/app/respository/
+      # ssh key put in git
+      - ~/Documents/sshkeys/caprover:/root/.ssh/id_rsa
