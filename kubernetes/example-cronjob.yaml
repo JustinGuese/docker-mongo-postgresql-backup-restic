@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-sql-prod
+spec:
+  concurrencyPolicy: Forbid
+  schedule: "1 3 * * *" # help: https://crontab.guru/#30_15-21_*_*_*
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup-sql-prod
+            image: guestros/db-backup-restic:latest
+            imagePullPolicy: Always
+            env:
+            - name: POSTGRES_URI
+              value: "postgres:postgres@URL:5432/postgres"
+            - name: GIT_REPO
+              value: git@github.com:JustinGuese/db-backups.git
+            - name: BACKUP_NAME
+              value: sql-prod
+            volumeMounts:
+              - name: ca-pemstore-github
+                mountPath: /root/.ssh/id_rsa
+                subPath: id_rsa
+                readOnly: true
+          restartPolicy: OnFailure
+          volumes:
+            # you need to create a configmap from your github ssh key 
+            # kubectl create configmap ca-pemstore-github --from-file=id_rsa=~/path/to/id_rsa
+            - name: ca-pemstore-github
+              configMap:
+                name: ca-pemstore-github
+                defaultMode: 0600
