@@ -48,4 +48,3 @@ if [ -n "$POSTGRES_URI" ] || [ -n "$MONGODB_URI" ]; then
     git commit -m "autobackup from docker"
     git push origin main  
 fi
-```
