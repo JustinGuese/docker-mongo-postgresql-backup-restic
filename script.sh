@@ -19,7 +19,7 @@ if [ -n "$POSTGRES_URI" ] && [ -z "$MONGODB_URI" ]; then
     # postgres dump
     # parse password from uri, it's between the first : and the first @ 
     POSTGRES_PASSWORD=$(echo $POSTGRES_URI | cut -d: -f1 | cut -d@ -f1)
-    PGPASSWORD=POSTGRES_PASSWORD pg_dumpall -d postgres://$POSTGRES_URI > $BACKUP_NAME/backup.sql
+    PGPASSWORD="$POSTGRES_PASSWORD" pg_dumpall -d postgres://$POSTGRES_URI > $BACKUP_NAME/backup.sql
     # git commit
     git add -A
     git commit -m "autobackup psql from docker"
